@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tq.mapping.Visits">
+	<!-- 新增信访信息 -->
+	<insert id="addVisits" parameterType="Visits" >
+		insert into tb_visit_info(id,name,tel,address,other_msg,visit_pro_id,visit_reason,visit_date,visit_material_path,is_del,visit_pro_name,img,visits_way,create_date,create_id)
+		 values(#{id},#{visitorName},#{visitorTel},#{visitorAddr},#{otherMsg},#{visitProId},#{visitReason},#{visitTime},#{visitMaterialPath},#{del},#{proName},#{img},#{visitsWay},#{createDate},#{createId})
+	</insert>
+	
+	<!-- 根据id获取对象 -->
+	<select id="selectVisitsById" resultType="Visits" parameterType="string">
+		select 		
+			id,name as visitorName,tel as visitorTel,address as visitorAddr,other_msg as otherMsg,
+			visit_pro_id as visitProId,visit_reason as visitReason,
+			visit_date as visitTime,visit_material_path as visitMaterialPath,
+			is_del as del,visit_pro_name as proName,img,visits_way as visitsWay
+			
+		from tb_visit_info
+		where id=#{id}
+	</select>
+	
+	<!-- 查询信访信息 -->
+	<select id="selectByQueryModel" resultType="Visits" parameterType="VisitsQueryModel">
+		select 		
+			id,name as visitorName,tel as visitorTel,address as visitorAddr,other_msg as otherMsg,
+			visit_pro_id as visitProId,visit_reason as visitReason,
+			visit_date as visitTime,visit_material_path as visitMaterialPath,
+			is_del as del,visit_pro_name as proName,img,visits_way as visitsWay
+		from tb_visit_info
+		where 1=1 
+			<if test="proName != null">
+				and  instr(visit_pro_name,#{proName})
+			</if>
+			
+			<if test="name != null">
+				and name like #{name}
+			</if>
+			
+			<if test="tel != null">
+				and tel = #{tel}
+			</if>
+			
+			<if test="createId != null">
+				and create_id = #{createId}
+			</if>
+			
+			limit #{indexPage},#{indexSize}
+		
+	</select>
+	<!-- 查询信访信息总记录数 -->
+	<select id="selectCountByQueryModel" resultType="int" parameterType="VisitsQueryModel">
+		select count(1)
+		from tb_visit_info
+		where 1=1 
+			<if test="proName != null">
+				and  instr(visit_pro_name,#{proName})
+			</if>
+			
+			<if test="name != null">
+				and name like #{name}
+			</if>
+			
+			<if test="tel != null">
+				and tel = #{tel}
+			</if>
+			
+			<if test="createId != null">
+				and create_id = #{createId}
+			</if>
+	</select>
+	
+	<!-- 根据id编辑信访 -->
+	<update id="updateVisitsById" parameterType="Visits">
+		update tb_visit_info set name=#{visitorName},
+		tel=#{visitorTel},
+		address=#{visitorAddr},
+		other_msg=#{otherMsg},
+		visit_reason=#{visitReason},
+		visit_material_path=#{visitMaterialPath},
+		img=#{img},
+		visit_pro_name=#{proName},
+		visit_pro_id=#{visitProId},
+		visits_way = #{visitsWay}
+		where id=#{id}
+	</update>
+</mapper>

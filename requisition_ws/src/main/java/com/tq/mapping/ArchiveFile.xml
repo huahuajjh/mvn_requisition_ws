@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tq.mapping.ArchiveFile">
+	<!-- 新增档案文件 -->
+	<insert id="addArchiveFile" parameterType="ArchiveFile" >
+		insert into tb_archive_file(id,file_path,file_type_id,title,article,create_date,type_str,img,create_id)
+		values(#{id},#{filePath},#{fileTypeId},#{title},#{article},#{createDate},#{typeStr},#{img},#{createId})
+	</insert>
+	
+	<!-- 根据父id查询文档 -->
+	<select id="selectArchiveByTypeId" resultType="ArchiveFile" parameterType="map">
+		select id,file_path as filePath,file_type_id as fileTypeId,title,article,create_date as createDate,img
+		from tb_archive_file where instr(file_type_id,#{typeId})
+		limit #{index},#{size}
+	</select>
+	
+	<!-- 修改文件 -->
+	<update id="updateArchiveFile" parameterType="ArchiveFile">
+		update tb_archive_file set 
+			file_path=#{filePath},
+			title=#{title} ,
+			img = #{img}
+		where id=#{id}
+	</update>
+	
+	<!-- 根据id删除文档 -->
+	<delete id="delArchiveByPid" parameterType="string">
+		delete from tb_archive_file where id = #{id}
+	</delete>
+	
+	<!-- 根据查询model查询文件列表 -->
+	<select id="selectArchiveByFuzzy" parameterType="ArchiveFileQueryModel" resultType="ArchiveFile">
+		select id, file_path as filePath ,file_type_id as fileTypeId,title,create_date as createDate,article,type_str as typeStr,img
+		from tb_archive_file where 1=1
+		<if test="title !=null">
+			and instr(title,#{title})
+		</if>
+		<if test="typeIds !=null">
+			and instr(file_type_id,#{typeIds})
+		</if>
+		<if test="createId!=null">
+			and create_id = #{createId}
+		</if>
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+		<!-- 根据查询model查询文件列表总记录数 -->
+	<select id="selectArchiveCountByFuzzy" parameterType="ArchiveFileQueryModel" resultType="int">
+		select count(1)
+		from tb_archive_file where 1=1
+		<if test="title !=null">
+			and instr(title,#{title})
+		</if>
+		<if test="typeIds !=null">
+			and instr(file_type_id,#{typeIds})
+		</if>
+		<if test="createId!=null">
+			and create_id = #{createId}
+		</if>
+	</select>
+	
+	<!-- 根据类型id查询总记录数 -->
+	<select id="selectArchiveCountByTypeId" parameterType="string" resultType="int">
+		select count(1)
+		from tb_archive_file where instr(file_type_id,#{typeIds})
+	</select>
+	
+	<!-- 根据关键字查询 -->
+	<select id="selectArchiveByKeyword" parameterType="map" resultType="ArchiveFile">
+		select id,file_path as filePath,file_type_id as fileTypeId,title,article,create_date as createDate,img
+		from tb_archive_file where instr(title,#{keywords})
+		limit #{index},#{size}
+	</select>
+	
+	<!-- 根据关键字查询总记录数 -->
+	<select id="selectArchiveCountByKeyword" parameterType="string" resultType="int">
+		select count(1)
+		from tb_archive_file where instr(title,#{keywords})
+	</select>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tq.mapping.FmlItem4Query">
+	<!-- 根据户id查询家庭成员集合 -->
+	<select id="selectByFmlId" parameterType="String" resultType="FamilyItem">
+		select
+		id,name,id_number as idNumber,birthday,gender,only_child_number as onlyChildNumber,is_half as half,relationship as relationshipStr,
+		household_type as householdStr,socialsecurity_str as socialsecurityStr,education_level as educationLevel,
+		current_education_situation as currentEducationSituation,
+		serve_army_situation as serveArmySituation,
+		other_relationship as otherRelationship
+		 from tb_family_item where fml_id = #{id}
+	</select>
+
+	<!-- 根据成员id查询转户信息 -->
+	<select id="selectTransferByItemId" parameterType="string"  resultType="TransferHouseholdInfo">
+		select f.is_transferd as isTransfer,t.transfer_date as transferDate,t.address,ht.type_name as houseHoldTypeStr
+		from tb_family_item as f left join tb_transfer_household_info as t
+			on f.id=t.fml_item_id
+		left join tb_household_type as ht
+			on ht.id = t.household_type_id
+		where f.id=#{id}
+	</select>
+	
+	<!-- 根据成员id查询社保信息 -->
+	<select id="selectSocialsecurityByItemId" parameterType="string" resultType="SocialsecurityInfo">
+		select s.socialsecurity_date as socialsecurityDate,s.serve_army_time as serveArmyTime,st.type_name as typeStr,
+		f.farming_time as farmTime,prison_time as prisonTime,endowment_insurance_year as endowmentInsuranceYear,
+		medical_insurance_month as medicalInsuranceMonth,join_which_medical_insurance as joinWhichMedicalInsurance,tel,
+		s.community
+		from tb_family_item as f left join tb_socialsecurity_info s
+			on f.id=s.fml_item_id
+		left join tb_socialsecurity_type as st
+			on st.id=s.socialsecurity_type_id
+		where f.id=#{id}
+	</select>
+	
+	<!-- 根据成员id查询购房券信息 -->
+	<select id="selectHptByItemId" parameterType="string" resultType="HousePuraseTicket">
+		select 
+			h.bonus,
+			h.make_date AS `makeDate`,
+			h.ticket_number AS ticketNumber,
+			p.getting_date AS gettingDate,
+			p.`name`,
+			p.`id_number` AS idNumber,
+			p.evidence_path AS evidence,
+			u.using_date AS useDate,
+			u.using_type_id AS useType,
+			u.situation_explain AS `explain`,
+			u.`using_to_where` AS useToWhere,
+			h.`ticket_state_id` AS ticketState,
+			u.`evidence_path` AS evidencePath
+		from tb_family_item as f left join tb_housepurchase_ticket as h
+			on f.id=h.fml_item_id and h.is_del=0
+		left join tb_ticket_provider as p
+			on p.ticket_id=h.id
+		left join tb_ticket_use_cash as u
+			on u.ticket_id=h.id
+		where f.id=#{id}
+	</select>
+	
+	<!-- 根据身份证查询该数据是否存在 -->
+	<select id="exitByIdNumber" parameterType="string" resultType="int">
+		select
+			count(1)
+		from tb_family_item
+		where id_number=#{idnum}
+	</select>
+</mapper>

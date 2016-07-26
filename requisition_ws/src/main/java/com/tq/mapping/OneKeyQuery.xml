@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tq.mapping.OneKeyQuery">	
+	<select id="onekeyqueryById" parameterType="String" resultType="OneKeyQuery">
+			SELECT
+				fi.name,
+				fi.id_number AS idNumber,
+				fi.birthday,		
+				CASE fi.gender
+					WHEN 0 THEN '男'
+					WHEN 1 THEN '女'
+					ELSE '其他'
+					END AS gender,
+				fi.only_child_number AS onlyChildNumber,
+				f.head_name AS headName,
+				f.address AS address,
+				f.image,
+				fi.other_relationship as otherRelationship,
+				f.house_legal_area AS houseLegalArea,
+				f.house_illegal_area AS houseIllegalArea,
+				f.house_img_path AS houseImgPath,
+				f.union_suggestion_path AS unionSuggestionPath,
+				p.pro_name AS proName,
+				p.approval_number AS approvalNumber,
+				CASE p.pro_type
+					WHEN 1 THEN '基础设施'
+					ELSE '其他'
+					END AS proTypeStr,
+				CASE p.sequence
+					WHEN 1 THEN '一公告'
+					WHEN 2 THEN '二公告'
+					ELSE '三公告'
+					END AS sequence,
+				th.transfer_date AS transferDate,
+				fi.household_type AS houseHoldTypeStr,
+				th.address AS tAddress,
+				ss.socialsecurity_date AS socialsecurityDate,
+				sst.type_name AS typeStr,
+				ss.serve_army_time AS serveArmyTime,
+				ss.endowment_insurance_year AS endowmentInsuranceYear,
+				ss.medical_insurance_month AS medicalInsuranceMonth,
+				ss.join_which_medical_insurance AS joinWhichMedicalInsurance,
+				ss.community,
+				ss.prison_time AS prisonTime
+				
+			FROM tb_family_item fi
+			LEFT JOIN tb_project p
+				ON fi.pro_id=p.id
+			LEFT JOIN tb_family f
+				ON f.id=fi.fml_id
+			LEFT JOIN tb_transfer_household_info th
+				ON th.fml_item_id=fi.id
+			LEFT JOIN tb_socialsecurity_info ss
+				ON ss.fml_item_id=fi.id
+			LEFT JOIN tb_socialsecurity_type sst
+				ON sst.id=ss.socialsecurity_type_id
+				WHERE fi.id=#{id}
+	</select>
+
+	<select id="onekeyQueryFuzzy" parameterType="string" resultType="OneKeyFuzzy">
+		select id,name,id_number as idNumber
+			from tb_family_item
+		where id_number like #{s} or name like #{s} limit 10
+	</select>
+
+</mapper>

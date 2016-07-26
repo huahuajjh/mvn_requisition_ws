@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tq.mapping.Statistics">
+	<!-- 调用存储过程，查询index page数据 -->
+	<select id="spStatistics" statementType="CALLABLE" parameterType="StatisticsQueryModel" resultType="Statistics">
+		{call sp_statistics(#{startDate},#{endDate},#{start},#{size})}
+	</select>
+	
+	<select id="spStatisticsCount" resultType="int" parameterType="DateSection">
+			SELECT 	
+				count(1)
+			FROM tb_project AS p
+				LEFT JOIN tb_family AS f ON f.`pro_id` = p.`id`
+			WHERE p.id IN(
+				SELECT DISTINCT fi.pro_id FROM tb_family_item AS fi WHERE fi.id IN(SELECT fml_item_id FROM tb_housepurchase_ticket WHERE create_date BETWEEN #{start} AND #{end})
+			)
+	</select>
+</mapper>

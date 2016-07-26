@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tq.mapping.RemovedInfo">
+	<!-- 新增已迁户信息 -->
+	<insert id="addRemovedInfo" parameterType="RemovedInfo" >
+		insert into tb_removed_info(id,name,id_number,address,birthday,removed_date,street_id,community_id,is_del,fit_policy,create_date,create_id)
+		values(#{id},#{name},#{idNumber},#{address},#{birthday},#{removeDate},#{streetId},#{communityId},0,#{fitPolicy},#{createDate},#{createId})
+	</insert>
+	
+	<!-- 根据身份证检测记录是否存在 -->
+	<select id="existsByIdNumber" parameterType="string" resultType="int">
+		select count(1) from tb_removed_info where id_number=#{idNumber}
+	</select>
+	
+	<!-- 根据查询model查询列表 -->
+	<select id="selectRemovedInfoByModel" resultType="RemovedInfo" parameterType="RemovedQueryModel">
+		select id,name,id_number as idNumber,address,birthday,removed_date as removeDate,street_id as streetId,community_id as communityId,fit_policy as fitPolicy
+		from tb_removed_info where is_del=0
+		<if test="idNumber!=null">
+			and id_number=#{idNumber}
+		</if>
+		
+		<if test="name!=null">
+			and instr(name,#{name})
+		</if>
+		
+		<if test="streetId!=null">
+			and street_id=#{streetId}
+		</if>
+		
+		<if test="communityId!=null">
+			and community_id=#{communityId}
+		</if>
+		
+		<if test="groupId!=null">
+			and group_id=#{groupId}
+		</if>
+		
+		<if test="createId!=null">
+			and create_id=#{createId}
+		</if>
+		
+		<if test="address!=null">
+			and instr(address,#{address})
+		</if>
+		
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<!-- 根据查询model查询总记录数 -->
+	<select id="selectRemovedInfoCount" resultType="int" parameterType="RemovedQueryModel">
+		select count(1)
+		from tb_removed_info where is_del=0
+		<if test="idNumber!=null">
+			and id_number=#{idNumber}
+		</if>
+		
+		<if test="name!=null">
+			and instr(name,#{name})
+		</if>
+		
+		<if test="streetId!=null">
+			and street_id=#{streetId}
+		</if>
+		
+		<if test="communityId!=null">
+			and community_id=#{communityId}
+		</if>
+		
+		<if test="groupId!=null">
+			and group_id=#{groupId}
+		</if>
+		
+		<if test="createId!=null">
+			and create_id=#{createId}
+		</if>
+		
+		<if test="address!=null">
+			and instr(address,#{address})
+		</if>
+	</select>
+	
+	<!-- 根据id修改已迁户信息 -->
+	<update id="updateRemovedInfo" parameterType="RemovedInfo">
+		update tb_removed_info set 
+		name=#{name},
+		id_number=#{idNumber},
+		address=#{address},
+		birthday=#{birthday},
+		removed_date=#{removeDate},
+		street_id=#{streetId},
+		community_id=#{communityId},
+		fit_policy = #{fitPolicy}
+		where id=#{id}
+	</update>
+	
+	<!-- 根据id删除已迁户信息 -->
+	<delete id="delRemovedInfoByid" parameterType="string">
+		delete from tb_removed_info where id=#{id}
+	</delete>
+</mapper>

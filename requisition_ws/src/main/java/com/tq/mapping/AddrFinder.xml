@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tq.mapping.AddrFinder">
+	<!-- query pro addr -->
+	<select id="queryProAddr" parameterType="string" resultType="string">
+		select DISTINCT total_address from tb_project where instr(total_address,#{fuzzy})  limit 10
+	</select>
+	
+	<!-- query fml addr -->
+	<select id="queryFmlAddr" parameterType="string" resultType="string">
+		select DISTINCT address from tb_family where instr(address,#{fuzzy})  limit 10
+	</select>
+	
+	<!-- query the family item address -->
+	<select id="queryFmlItemAddr" parameterType="string" resultType="string">
+		select DISTINCT address from tb_family_item where instr(address,#{fuzzy}) limit 10
+ 	</select>
+ 	
+ 	<!-- query the visitor address -->
+	<select id="queryVisitorAddr" parameterType="string" resultType="string">
+		select DISTINCT address from tb_visit_info where instr(address,#{fuzzy})  limit 10
+ 	</select>
+ 	
+ 	<!-- query the removed information address -->
+	<select id="queryRemovedInfoAddr" parameterType="string" resultType="string">
+		select DISTINCT address from tb_removed_info where instr(address,#{fuzzy})  limit 10
+ 	</select>
+ 	
+</mapper>

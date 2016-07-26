@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tq.mapping.ProCategory">
+	<!-- 新增项目分类 -->
+	<insert id="addProCategory" parameterType="ProCategory" >
+		insert into tb_pro_category(id,name) values(#{id},#{name})
+	</insert>
+	
+	<!-- 查询所有项目分类信息 -->
+	<select id="queryAllProCategory" resultType="ProCategory" >
+		select * from tb_pro_category
+	</select>
+	
+	<!-- 修改文件 -->
+	<update id="modifyProCategory" parameterType="ProCategory">
+		update tb_pro_category set name=#{name} where id=#{id}
+	</update>
+	
+	<!-- 根据id删除 -->
+	<delete id="delProCategoryById" parameterType="string">
+		delete from tb_pro_category where id = #{id}
+	</delete>
+	
+	<!-- 根据姓名检测是否存在记录 -->
+	<select id="queryExitsByName" parameterType="string" resultType="int">
+		select count(1) from tb_pro_category where name=#{name}
+	</select>
+</mapper>
